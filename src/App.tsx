@@ -13,19 +13,27 @@ type Brand = {
   accent: string;
   mark: string;
   image: string;
+  link?: BrandLink;
 };
+
+type BrandLink =
+  | { type: 'external'; href: string }
+  | { type: 'internal'; href: string };
+
+const VARATAAA_URL = 'https://ecommerce-f1448.web.app/';
 
 const brands: Brand[] = [
   { name: 'XKUVZUT', number: '01', tagline: 'Undefined. Unmatched.', description: 'A study in self-definition, built for the ones who never fit the frame.', accent: '#1a3d2b', mark: 'X', image: 'https://images.pexels.com/photos/1066171/pexels-photo-1066171.jpeg?auto=compress&cs=tinysrgb&h=900&w=600' },
-  { name: 'VARATAAA', number: '02', tagline: 'Rooted in culture. Worn with purpose.', description: 'Modern uniforms for a new generation of independent thinkers.', accent: '#162e1f', mark: 'V', image: 'https://images.pexels.com/photos/20437814/pexels-photo-20437814.jpeg?auto=compress&cs=tinysrgb&h=900&w=600' },
-  { name: 'KIDNAP', number: '03', tagline: 'Bold enough to steal the scene.', description: 'A sharper take on streetwear, designed to command the room.', accent: '#0d1f14', mark: 'K', image: 'https://images.pexels.com/photos/19658525/pexels-photo-19658525.jpeg?auto=compress&cs=tinysrgb&h=900&w=600' },
-  { name: 'KOHLEYED', number: '04', tagline: 'See the world differently.', description: 'Unexpected perspective, cut into every considered detail.', accent: '#112918', mark: 'O', image: 'https://images.pexels.com/photos/30492648/pexels-photo-30492648.jpeg?auto=compress&cs=tinysrgb&h=900&w=600' },
+  { name: 'VARATAAA', number: '02', tagline: 'Rooted in culture. Worn with purpose.', description: 'Modern uniforms for a new generation of independent thinkers.', accent: '#162e1f', mark: 'V', image: 'https://images.pexels.com/photos/20437814/pexels-photo-20437814.jpeg?auto=compress&cs=tinysrgb&h=900&w=600', link: { type: 'internal', href: '/varataaa' } },
+  { name: 'KIDNAP', number: '03', tagline: 'Bold enough to steal the scene.', description: 'A sharper take on streetwear, designed to command the room.', accent: '#0d1f14', mark: 'K', image: 'https://images.pexels.com/photos/19658525/pexels-photo-19658525.jpeg?auto=compress&cs=tinysrgb&h=900&w=600', link: { type: 'external', href: 'https://www.instagram.com/kid_naph/' } },
+  { name: 'KOHLEYED', number: '04', tagline: 'See the world differently.', description: 'Unexpected perspective, cut into every considered detail.', accent: '#112918', mark: 'O', image: 'https://images.pexels.com/photos/30492648/pexels-photo-30492648.jpeg?auto=compress&cs=tinysrgb&h=900&w=600', link: { type: 'external', href: 'https://www.instagram.com/koh_leyed/' } },
 ];
 
 function App() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [introFinished, setIntroFinished] = useState(false);
+  const [pathname, setPathname] = useState(() => window.location.pathname);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 60);
@@ -33,7 +41,25 @@ function App() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
+  useEffect(() => {
+    const onPopState = () => setPathname(window.location.pathname);
+    window.addEventListener('popstate', onPopState);
+    return () => window.removeEventListener('popstate', onPopState);
+  }, []);
+
   const closeMenu = () => setMenuOpen(false);
+  const navigateInternal = (path: string) => {
+    if (window.location.pathname !== path) {
+      window.history.pushState({}, '', path);
+    }
+    setPathname(path);
+    setMenuOpen(false);
+    window.scrollTo({ top: 0, behavior: 'auto' });
+  };
+
+  if (pathname === '/varataaa') {
+    return <VarataaaRoute onNavigate={navigateInternal} />;
+  }
 
   return (
     <div className={`site-shell ${introFinished ? 'intro-finished' : ''}`}>
@@ -65,8 +91,12 @@ function App() {
               <h1 className="hero-title">
                 <span className="hero-shimmer" data-cursor="hover" data-text="HANDLE">HANDLE</span>
               </h1>
+              <div className="hero-bottom brand-fade" style={{ animationDelay: '1.8s' }} aria-label="Our principles">
+                <span>ELEVATE</span>
+                <span>EXCEL</span>
+                <span>ENGAGE</span>
+              </div>
             </div>
-            <div className="hero-bottom brand-fade" style={{ animationDelay: '1.8s' }} />
           </div>
         </section>
 
@@ -84,7 +114,7 @@ function App() {
           <div className="brand-grid">
             {brands.map((brand, i) => (
               <Reveal key={brand.name} delay={i * 120} threshold={0.15}>
-                <BrandCard brand={brand} />
+                <BrandCard brand={brand} onInternalNavigate={navigateInternal} />
               </Reveal>
             ))}
           </div>
@@ -118,10 +148,6 @@ function App() {
               <Reveal delay={350}><a className="text-link" href="#philosophy">Our philosophy <ArrowUpRight size={15} /></a></Reveal>
             </div>
           </div>
-          <div className="about-images">
-            <ImageReveal src="https://images.pexels.com/photos/10370358/pexels-photo-10370358.jpeg?auto=compress&cs=tinysrgb&h=1000&w=640" alt="Editorial fashion portrait" parallax={40} className="about-img-left" />
-            <ImageReveal src="https://images.pexels.com/photos/31168037/pexels-photo-31168037.jpeg?auto=compress&cs=tinysrgb&h=1000&w=640" alt="Dramatic fashion portrait" parallax={-30} delay={150} className="about-img-right" />
-          </div>
         </section>
 
 
@@ -131,7 +157,7 @@ function App() {
           <div className="philosophy-inner">
             <Reveal><div className="section-meta"><span>03</span><span>The standard</span></div></Reveal>
             <Reveal variant="line" delay={100}>
-              <h2>Not made for everyone.<br /><em>Made for the ones who lead.</em></h2>
+              <h2>Not made for everyone.<br /><em>Made for the one's who lead.</em></h2>
             </Reveal>
             <div className="pillars">
               <Reveal delay={150}><div className="pillar"><span className="pillar-number">01</span><h3>Legacy</h3><p>Built to last beyond seasons.</p></div></Reveal>
@@ -167,7 +193,84 @@ function App() {
   );
 }
 
-function BrandCard({ brand }: { brand: Brand }) {
+function VarataaaRoute({ onNavigate }: { onNavigate: (path: string) => void }) {
+  const goHome = (event: React.MouseEvent<HTMLAnchorElement>) => {
+    event.preventDefault();
+    onNavigate('/');
+  };
+
+  return (
+    <div className="site-shell intro-finished">
+      <CustomCursor />
+      <header className="site-nav is-scrolled">
+        <a className="nav-wordmark" href="/" aria-label="HANDLE home" onClick={goHome}>
+          <span className="shimmer-text">THEHANDLE.IN</span>
+        </a>
+        <nav className="nav-links varataaa-nav-links" aria-label="Varataaa navigation">
+          <a className="nav-index" href="/" onClick={goHome}>Back to HANDLE <ArrowRight size={14} /></a>
+        </nav>
+      </header>
+      <main className="varataaa-route" aria-label="Varataaa embedded store">
+        <iframe
+          className="varataaa-frame"
+          src={VARATAAA_URL}
+          title="Varataaa"
+          loading="eager"
+          referrerPolicy="no-referrer-when-downgrade"
+        />
+      </main>
+    </div>
+  );
+}
+
+function BrandAction({
+  brand,
+  children,
+  className,
+  onInternalNavigate,
+}: {
+  brand: Brand;
+  children: React.ReactNode;
+  className?: string;
+  onInternalNavigate: (path: string) => void;
+}) {
+  if (!brand.link) {
+    return <a className={className} href="#contact" aria-label={`Learn more about ${brand.name}`}>{children}</a>;
+  }
+
+  if (brand.link.type === 'external') {
+    return (
+      <a className={className} href={brand.link.href} target="_blank" rel="noopener noreferrer" aria-label={`Visit ${brand.name}`}>
+        {children}
+      </a>
+    );
+  }
+
+  const internalHref = brand.link.href;
+  // Open internal brand routes in a separate tab while preserving the
+  // relative URL (for example, localhost:5173/varataaa).
+  if (brand.name === 'VARATAAA') {
+    return (
+      <a className={className} href={internalHref} target="_blank" rel="noopener noreferrer" aria-label={`Visit ${brand.name}`}>
+        {children}
+      </a>
+    );
+  }
+
+  const handleInternalClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
+    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return;
+    event.preventDefault();
+    onInternalNavigate(internalHref);
+  };
+
+  return (
+    <a className={className} href={internalHref} onClick={handleInternalClick} aria-label={`Visit ${brand.name}`}>
+      {children}
+    </a>
+  );
+}
+
+function BrandCard({ brand, onInternalNavigate }: { brand: Brand; onInternalNavigate: (path: string) => void }) {
   return (
     <article className="brand-card" style={{ '--brand-accent': brand.accent } as React.CSSProperties}>
       <div className="brand-card-image">
@@ -180,12 +283,18 @@ function BrandCard({ brand }: { brand: Brand }) {
           <span className="brand-mark">{brand.mark}</span>
         </div>
         <div className="brand-card-center">
-          <h3>{brand.name}</h3>
+          <h3>
+            <BrandAction brand={brand} className="brand-title-link" onInternalNavigate={onInternalNavigate}>
+              {brand.name}
+            </BrandAction>
+          </h3>
           <p>{brand.tagline}</p>
         </div>
         <div className="brand-card-bottom">
           <p>{brand.description}</p>
-          <a href="#contact" aria-label={`Learn more about ${brand.name}`}>Learn more <ArrowRight size={15} /></a>
+          <BrandAction brand={brand} onInternalNavigate={onInternalNavigate}>
+            Learn more <ArrowRight size={15} />
+          </BrandAction>
         </div>
       </div>
     </article>
