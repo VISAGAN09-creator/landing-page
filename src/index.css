@@ -98,7 +98,7 @@ body { scrollbar-width: none; }
   align-items: center; display: flex; height: 76px; justify-content: space-between;
   left: 0; right: 0; top: 0; position: fixed; z-index: 100;
   padding: 0 clamp(24px, 6vw, 96px);
-  background: transparent; transition: background 0.5s var(--ease), backdrop-filter 0.5s var(--ease), border-color 0.5s var(--ease);
+  background: transparent;
   border-bottom: 1px solid transparent;
   opacity: 0; transform: translateY(-10px); transition: background 0.5s var(--ease), backdrop-filter 0.5s var(--ease), border-color 0.5s var(--ease), opacity 0.45s ease, transform 0.45s ease;
 }
@@ -193,6 +193,32 @@ body { scrollbar-width: none; }
   letter-spacing: 0.02em; line-height: 0.98; margin: 0 0 clamp(16px, 2.2vw, 34px);
   white-space: nowrap;
 }
+.hero-bottom {
+  align-items: center;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: space-between;
+  margin-top: clamp(14px, 1.8vw, 24px);
+  margin-bottom: 0;
+  padding: 0;
+  width: 100%;
+}
+.hero-bottom span {
+  color: var(--text);
+  font-family: 'Inter', sans-serif;
+  font-size: clamp(11px, 1.15vw, 15px);
+  font-weight: 700;
+  letter-spacing: clamp(0.1em, 0.2vw, 0.18em);
+  line-height: 1;
+  text-transform: uppercase;
+  user-select: none;
+  white-space: nowrap;
+  transition: color 0.3s var(--ease), text-shadow 0.3s var(--ease);
+}
+.hero-bottom span:hover {
+  color: var(--accent);
+  text-shadow: 0 0 12px rgba(0, 230, 118, 0.4);
+}
 .hero-copy { display: none; }
 .hero-copy p { color: var(--muted); font-size: 11px; line-height: 1.65; margin: 0; }
 .outline-button {
@@ -284,6 +310,8 @@ em { color: var(--accent); font-style: normal; }
 }
 .brand-card-center { text-align: left; padding: 0; }
 .brand-card-center h3 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(1.9rem, 2.4vw, 2.8rem); font-weight: 400; letter-spacing: 0.04em; line-height: 0.9; margin: 0; }
+.brand-title-link { color: inherit; display: inline-block; transition: color 0.3s ease; }
+.brand-title-link:hover { color: var(--accent); }
 .brand-card-center p { color: #d2d8d4; font-size: 10px; letter-spacing: 0.08em; line-height: 1.45; margin: 12px 0 0; }
 .brand-card-bottom { align-items: flex-start; display: flex; flex-direction: column; gap: 20px; }
 .brand-card-bottom p { color: #9ba69f; font-size: 11px; line-height: 1.55; margin: 0; max-width: none; text-transform: none; letter-spacing: 0; }
@@ -291,6 +319,25 @@ em { color: var(--accent); font-style: normal; }
 .brand-card-bottom a svg { transition: transform 0.3s var(--ease); }
 .brand-card-bottom a:hover { color: var(--accent); }
 .brand-card-bottom a:hover svg { transform: translateX(4px); }
+
+/* ============ VARATAAA ROUTE ============ */
+.varataaa-route {
+  background: #050505;
+  min-height: 100svh;
+  padding-top: 76px;
+}
+.varataaa-frame {
+  background: #fff;
+  border: 0;
+  display: block;
+  height: calc(100svh - 76px);
+  width: 100%;
+}
+.varataaa-nav-links {
+  opacity: 1;
+  pointer-events: auto;
+  transform: none;
+}
 
 /* ============ PHILOSOPHY ============ */
 .philosophy { background: #102518; min-height: 700px; overflow: hidden; padding-top: 90px; padding-bottom: 120px; position: relative; }
@@ -349,13 +396,29 @@ em { color: var(--accent); font-style: normal; }
     position: absolute; right: 0; top: 0; transform: translateY(-12px); transition: opacity 0.3s ease, transform 0.3s ease;
   }
   .nav-links.is-open { opacity: 1; pointer-events: auto; transform: translateY(0); }
+  .varataaa-nav-links {
+    align-items: center;
+    background: transparent;
+    border-bottom: 0;
+    flex-direction: row;
+    opacity: 1;
+    padding: 0;
+    pointer-events: auto;
+    position: static;
+    transform: none;
+  }
   .nav-index { border-top: 1px solid var(--border); padding-top: 24px; width: 100%; }
-  .hero { min-height: 100svh; padding-top: 92px; }
+  .varataaa-nav-links .nav-index { border-top: 0; padding-top: 0; width: auto; }
+  /* Let the hero end after its content on narrow screens so it doesn't
+     reserve a full viewport of empty space below HANDLE. */
+  .hero { min-height: auto; padding-top: 92px; padding-bottom: 36px; }
   .intro-wordmark-stages { height: 48vw; }
   .intro-word { font-size: clamp(5rem, 29vw, 11rem); }
-  .hero-title-row { max-width: calc(100vw - 32px); padding: 0; }
-  .hero-shimmer { font-size: clamp(5.5rem, 24vw, 10rem); margin-bottom: 60px; }
-  .hero-kicker { margin-bottom: 24px; white-space: normal; }
+  .hero-title-row { max-width: calc(100vw - 32px); padding: 0; margin-bottom: clamp(32px, 6vw, 48px); }
+  .hero-shimmer { font-size: clamp(5.5rem, 24vw, 10rem); margin-bottom: 0; }
+  .hero-kicker { margin-bottom: clamp(12px, 2vw, 20px); white-space: normal; }
+  .hero-bottom { gap: 0; margin-top: clamp(8px, 2.2vw, 14px); padding: 0; width: 100%; justify-content: space-between; }
+  .hero-bottom span { font-size: clamp(8px, 2.3vw, 11px); font-weight: 600; letter-spacing: clamp(0.05em, 1.2vw, 0.1em); min-width: 0; flex: initial; padding: 0; }
   .hero-copy { flex-direction: column; gap: 20px; }
   .scroll-note { bottom: 26px; }
   .hero-coordinate { bottom: 29px; }
@@ -372,6 +435,8 @@ em { color: var(--accent); font-style: normal; }
   .pillar h3 { margin-top: 16px; }
   .cta-strip { flex-direction: column; align-items: flex-start; }
   .footer-top, .footer-mid, .footer-bottom { flex-direction: column; align-items: flex-start; gap: 20px; }
+  .varataaa-route { padding-top: 66px; }
+  .varataaa-frame { height: calc(100svh - 66px); }
 }
 
 /* ============ REDUCED MOTION ============ */
