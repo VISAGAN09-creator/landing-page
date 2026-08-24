@@ -94,7 +94,7 @@ function App() {
               <div className="hero-bottom brand-fade" style={{ animationDelay: '1.8s' }} aria-label="Our principles">
                 <span>ELEVATE</span>
                 <span>EXCEL</span>
-                <span>ENGAGE</span>
+                <span>ENDORSE</span>
               </div>
             </div>
           </div>
