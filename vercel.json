@@ -1,0 +1,12 @@
+{
+  "rewrites": [
+    {
+      "source": "/varataaa",
+      "destination": "https://ecommerce-f1448.web.app"
+    },
+    {
+      "source": "/varataaa",
+      "destination": "https://ecommerce-f1448.web.app/:path*"
+    }
+  ]
+}
