@@ -14,7 +14,7 @@
     },
     {
       "source": "/kohleyed/:path*",
-      "destination": "https://kohleyed-a8060.web.app/:path*"
+      "destination": "https://kohleyed-a8060.web.app/kohleyed/:path*"
     }
   ]
 }
