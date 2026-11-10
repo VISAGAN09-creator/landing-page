@@ -20,13 +20,22 @@ type BrandLink =
   | { type: 'external'; href: string }
   | { type: 'internal'; href: string };
 
-const VARATAAA_URL = 'https://ecommerce-f1448.web.app/';
+const INTERNAL_BRAND_ROUTES: Record<string, { title: string; url: string }> = {
+  '/varataaa': {
+    title: 'Varataaa',
+    url: 'https://ecommerce-f1448.web.app/',
+  },
+  '/kohleyed': {
+    title: 'Kohleyed',
+    url: 'https://kohleyed-a8060.web.app/',
+  },
+};
 
 const brands: Brand[] = [
   { name: 'XKUVZUT', number: '01', tagline: 'Undefined. Unmatched.', description: 'A study in self-definition, built for the ones who never fit the frame.', accent: '#1a3d2b', mark: 'X', image: 'https://images.pexels.com/photos/1066171/pexels-photo-1066171.jpeg?auto=compress&cs=tinysrgb&h=900&w=600' },
   { name: 'VARATAAA', number: '02', tagline: 'Rooted in culture. Worn with purpose.', description: 'Modern uniforms for a new generation of independent thinkers.', accent: '#162e1f', mark: 'V', image: 'https://images.pexels.com/photos/20437814/pexels-photo-20437814.jpeg?auto=compress&cs=tinysrgb&h=900&w=600', link: { type: 'internal', href: '/varataaa' } },
   { name: 'KIDNAP', number: '03', tagline: 'Bold enough to steal the scene.', description: 'A sharper take on streetwear, designed to command the room.', accent: '#0d1f14', mark: 'K', image: 'https://images.pexels.com/photos/19658525/pexels-photo-19658525.jpeg?auto=compress&cs=tinysrgb&h=900&w=600', link: { type: 'external', href: 'https://www.instagram.com/kid_naph/' } },
-  { name: 'KOHLEYED', number: '04', tagline: 'See the world differently.', description: 'Unexpected perspective, cut into every considered detail.', accent: '#112918', mark: 'O', image: 'https://images.pexels.com/photos/30492648/pexels-photo-30492648.jpeg?auto=compress&cs=tinysrgb&h=900&w=600', link: { type: 'external', href: 'https://www.instagram.com/koh_leyed/' } },
+  { name: 'KOHLEYED', number: '04', tagline: 'See the world differently.', description: 'Unexpected perspective, cut into every considered detail.', accent: '#112918', mark: 'O', image: 'https://images.pexels.com/photos/30492648/pexels-photo-30492648.jpeg?auto=compress&cs=tinysrgb&h=900&w=600', link: { type: 'internal', href: '/kohleyed' } },
 ];
 
 function App() {
@@ -57,8 +66,17 @@ function App() {
     window.scrollTo({ top: 0, behavior: 'auto' });
   };
 
-  if (pathname === '/varataaa') {
-    return <VarataaaRoute onNavigate={navigateInternal} />;
+  const normalizedPathname = pathname.replace(/\/+$/, '') || '/';
+  const internalBrandRoute = INTERNAL_BRAND_ROUTES[normalizedPathname];
+
+  if (internalBrandRoute) {
+    return (
+      <EmbeddedBrandRoute
+        title={internalBrandRoute.title}
+        url={internalBrandRoute.url}
+        onNavigate={navigateInternal}
+      />
+    );
   }
 
   return (
@@ -114,7 +132,7 @@ function App() {
           <div className="brand-grid">
             {brands.map((brand, i) => (
               <Reveal key={brand.name} delay={i * 120} threshold={0.15}>
-                <BrandCard brand={brand} onInternalNavigate={navigateInternal} />
+                <BrandCard brand={brand} />
               </Reveal>
             ))}
           </div>
@@ -193,7 +211,15 @@ function App() {
   );
 }
 
-function VarataaaRoute({ onNavigate }: { onNavigate: (path: string) => void }) {
+function EmbeddedBrandRoute({
+  title,
+  url,
+  onNavigate,
+}: {
+  title: string;
+  url: string;
+  onNavigate: (path: string) => void;
+}) {
   const goHome = (event: React.MouseEvent<HTMLAnchorElement>) => {
     event.preventDefault();
     onNavigate('/');
@@ -206,15 +232,15 @@ function VarataaaRoute({ onNavigate }: { onNavigate: (path: string) => void }) {
         <a className="nav-wordmark" href="/" aria-label="HANDLE home" onClick={goHome}>
           <span className="shimmer-text">THEHANDLE.IN</span>
         </a>
-        <nav className="nav-links varataaa-nav-links" aria-label="Varataaa navigation">
+        <nav className="nav-links varataaa-nav-links" aria-label={`${title} navigation`}>
           <a className="nav-index" href="/" onClick={goHome}>Back to HANDLE <ArrowRight size={14} /></a>
         </nav>
       </header>
-      <main className="varataaa-route" aria-label="Varataaa embedded store">
+      <main className="varataaa-route" aria-label={`${title} embedded store`}>
         <iframe
           className="varataaa-frame"
-          src={VARATAAA_URL}
-          title="Varataaa"
+          src={url}
+          title={title}
           loading="eager"
           referrerPolicy="no-referrer-when-downgrade"
         />
@@ -227,50 +253,26 @@ function BrandAction({
   brand,
   children,
   className,
-  onInternalNavigate,
 }: {
   brand: Brand;
   children: React.ReactNode;
   className?: string;
-  onInternalNavigate: (path: string) => void;
 }) {
   if (!brand.link) {
     return <a className={className} href="#contact" aria-label={`Learn more about ${brand.name}`}>{children}</a>;
   }
 
-  if (brand.link.type === 'external') {
-    return (
-      <a className={className} href={brand.link.href} target="_blank" rel="noopener noreferrer" aria-label={`Visit ${brand.name}`}>
-        {children}
-      </a>
-    );
-  }
-
-  const internalHref = brand.link.href;
-  // Open internal brand routes in a separate tab while preserving the
-  // relative URL (for example, localhost:5173/varataaa).
-  if (brand.name === 'VARATAAA') {
-    return (
-      <a className={className} href={internalHref} target="_blank" rel="noopener noreferrer" aria-label={`Visit ${brand.name}`}>
-        {children}
-      </a>
-    );
-  }
-
-  const handleInternalClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
-    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return;
-    event.preventDefault();
-    onInternalNavigate(internalHref);
-  };
-
+  // Open both external and internal brand routes in a separate tab so relative
+  // paths (for example, /varataaa or /kohleyed) trigger server rewrites on
+  // thehandle.in instead of staying inside the landing-page SPA.
   return (
-    <a className={className} href={internalHref} onClick={handleInternalClick} aria-label={`Visit ${brand.name}`}>
+    <a className={className} href={brand.link.href} target="_blank" rel="noopener noreferrer" aria-label={`Visit ${brand.name}`}>
       {children}
     </a>
   );
 }
 
-function BrandCard({ brand, onInternalNavigate }: { brand: Brand; onInternalNavigate: (path: string) => void }) {
+function BrandCard({ brand }: { brand: Brand }) {
   return (
     <article className="brand-card" style={{ '--brand-accent': brand.accent } as React.CSSProperties}>
       <div className="brand-card-image">
@@ -284,7 +286,7 @@ function BrandCard({ brand, onInternalNavigate }: { brand: Brand; onInternalNavi
         </div>
         <div className="brand-card-center">
           <h3>
-            <BrandAction brand={brand} className="brand-title-link" onInternalNavigate={onInternalNavigate}>
+            <BrandAction brand={brand} className="brand-title-link">
               {brand.name}
             </BrandAction>
           </h3>
@@ -292,7 +294,7 @@ function BrandCard({ brand, onInternalNavigate }: { brand: Brand; onInternalNavi
         </div>
         <div className="brand-card-bottom">
           <p>{brand.description}</p>
-          <BrandAction brand={brand} onInternalNavigate={onInternalNavigate}>
+          <BrandAction brand={brand}>
             Learn more <ArrowRight size={15} />
           </BrandAction>
         </div>
