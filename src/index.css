@@ -291,7 +291,7 @@ em { color: var(--accent); font-style: normal; }
 }
 .brand-card {
   background: #0e100f; border: 1px solid rgba(255,255,255,0.12); border-radius: clamp(24px, 2.2vw, 36px);
-  display: flex; flex-direction: column; min-height: clamp(470px, 37vw, 560px); overflow: hidden; position: relative;
+  display: flex; flex-direction: column; overflow: hidden; position: relative;
   transition: background 0.4s var(--ease), border-color 0.4s var(--ease), box-shadow 0.4s var(--ease), transform 0.4s var(--ease);
 }
 .brand-card:hover { background: #121714; border-color: rgba(0,230,118,0.42); box-shadow: 0 18px 42px rgba(0,0,0,0.3); transform: translateY(-6px); }
@@ -319,6 +319,69 @@ em { color: var(--accent); font-style: normal; }
 .brand-card-bottom a svg { transition: transform 0.3s var(--ease); }
 .brand-card-bottom a:hover { color: var(--accent); }
 .brand-card-bottom a:hover svg { transform: translateX(4px); }
+
+/* Clickable card */
+.brand-card-clickable { cursor: pointer; user-select: none; -webkit-tap-highlight-color: transparent; }
+.brand-card-clickable:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+
+/* Brand logo inside card */
+.brand-logo-wrap {
+  display: flex;
+  align-items: center;
+  height: clamp(38px, 3.5vw, 52px);
+  margin-bottom: 4px;
+}
+.brand-logo {
+  max-height: 100%;
+  max-width: 100%;
+  width: auto;
+  object-fit: contain;
+  display: block;
+}
+
+/* CTA text at bottom of card (replaces the old <a>) */
+.brand-card-cta {
+  align-items: center;
+  color: var(--text);
+  display: flex;
+  font-size: 9px;
+  gap: 10px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  transition: color 0.3s ease;
+}
+.brand-card-cta svg { transition: transform 0.3s var(--ease); }
+.brand-card-clickable:hover .brand-card-cta { color: var(--accent); }
+.brand-card-clickable:hover .brand-card-cta svg { transform: translateX(4px); }
+
+/* Coming-soon toast overlay */
+.brand-toast {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  z-index: 10;
+  animation: toast-in 0.35s var(--ease) forwards;
+}
+.brand-toast span {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(2rem, 4vw, 3.5rem);
+  letter-spacing: 0.08em;
+  color: var(--accent);
+}
+@keyframes toast-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.brand-carousel-dots {
+  display: none;
+}
 
 /* ============ VARATAAA ROUTE ============ */
 .varataaa-route {
@@ -381,10 +444,14 @@ em { color: var(--accent); font-style: normal; }
 .footer-bottom { display: flex; justify-content: space-between; padding-top: 26px; color: var(--muted); font-size: 9px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; gap: 16px; flex-wrap: wrap; }
 
 /* ============ RESPONSIVE ============ */
+@media (min-width: 761px) {
+  .brand-grid > *:nth-child(n+5) {
+    display: none;
+  }
+}
+
 @media (max-width: 1100px) {
   .brand-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .brand-card { min-height: 530px; }
-  .brand-card-image { flex-basis: 245px; }
 }
 
 @media (max-width: 760px) {
@@ -428,9 +495,65 @@ em { color: var(--accent); font-style: normal; }
   .section-heading h2 { margin: 40px 0 12px; text-align: left; }
   .section-heading-copy { text-align: left; }
   .section-heading p { margin-top: 0; }
-  .brand-grid { grid-template-columns: 1fr; }
-  .brand-card { min-height: 500px; }
-  .brand-card-image { flex-basis: 250px; }
+  .brand-grid {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: none;
+    -webkit-overflow-scrolling: touch;
+    gap: 16px;
+    padding: 10px 24px 20px;
+    margin-left: -24px;
+    margin-right: -24px;
+    scrollbar-width: none;
+  }
+  .brand-grid.is-user-scrolling {
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+  }
+  .brand-grid::-webkit-scrollbar {
+    display: none;
+  }
+  .brand-grid > * {
+    flex: 0 0 82%;
+    max-width: 320px;
+    scroll-snap-align: center;
+    scroll-snap-stop: always;
+  }
+  .brand-carousel-item {
+    display: flex;
+    flex-direction: column;
+  }
+  .brand-grid > .reveal-up {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .brand-card {
+    min-height: auto;
+    height: 100%;
+    width: 100%;
+  }
+  .brand-carousel-dots {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin-top: 14px;
+  }
+  .carousel-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.22);
+    border: none;
+    padding: 0;
+    transition: all 0.35s ease;
+    cursor: pointer;
+  }
+  .carousel-dot.is-active {
+    background: var(--accent);
+    width: 22px;
+    border-radius: 4px;
+  }
   .pillars { grid-template-columns: 1fr; margin-left: 0; margin-top: 70px; }
   .pillar h3 { margin-top: 16px; }
   .cta-strip { flex-direction: column; align-items: flex-start; }
